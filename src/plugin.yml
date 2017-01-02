@@ -1,0 +1,4 @@
+name: LLChat
+main: me.cxom.LLChat.llchat
+version: 0.0
+description: A custom chat plugin for the AroundTheWorldMC /r/languagelearning server
