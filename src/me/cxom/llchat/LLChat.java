@@ -61,6 +61,14 @@ public class LLChat extends JavaPlugin implements Listener{
 	}
 	
 	@Override
+	public void onDisable(){
+		for (LLChatPlayer llp : players.values()){
+			llp.remove();
+		}
+		players.clear();
+	}
+	
+	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args){
 		if (label.equalsIgnoreCase("lltest")){
 			channels.get("FRENCH").sendMessage(args[0], "Console");

@@ -6,7 +6,10 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+
+import me.cxom.llchat.configuration.ConfigManager;
 
 public class LLChatPlayer {
 
@@ -15,10 +18,24 @@ public class LLChatPlayer {
 	private List<ChatChannel> channels = new ArrayList<>();
 	private boolean hasResourcePack = false;
 	
+	
+	
 	public LLChatPlayer(UUID uuid){
 		this.uuid = uuid;
-		addChatChannel(ChatChannel.getGlobal());
 		setMainChatChannel(ChatChannel.getGlobal());
+		loadPlayer();
+	}
+	
+	public void loadPlayer(){
+		String langs = ConfigManager.getPlayersConfig().getString(uuid.toString());
+		if (langs != null){
+			for (String channel : langs.split(" ")){
+				ChatChannel cc = LLChat.getChatChannel(channel);
+				if (cc != null){
+					addChatChannel(cc);
+				}
+			}
+		}
 	}
 	
 	public UUID getUniqueId(){
@@ -82,9 +99,20 @@ public class LLChatPlayer {
 	}
 	
 	public void remove(){
+		savePlayer();
 		for(ChatChannel cc : channels){
 			cc.removeMember(this);
 		}
+	}
+	
+	public void savePlayer(){
+		FileConfiguration players = ConfigManager.getPlayersConfig();
+		String langs = "";
+		for(ChatChannel cc : channels){
+			langs += " " + cc.getName();
+		}
+		players.set(uuid.toString(), langs.trim());
+		ConfigManager.savePlayersConfig();
 	}
 	
 }

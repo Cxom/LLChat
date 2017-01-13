@@ -46,5 +46,17 @@ public class ConfigManager {
 	public static FileConfiguration getPlayersConfig(){
 		return players;
 	}
+
+	public static void saveConfig(){
+		LLChat.getPlugin().saveConfig();
+	}
+	
+	public static void savePlayersConfig() {
+		try {
+			players.save(playersf);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 	
 }
