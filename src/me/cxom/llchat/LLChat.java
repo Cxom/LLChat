@@ -18,7 +18,10 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import me.cxom.llchat.configuration.ConfigManager;
 
 public class LLChat extends JavaPlugin implements Listener{
 	
@@ -37,8 +40,16 @@ public class LLChat extends JavaPlugin implements Listener{
 		return players.get(uuid);
 	}
 	
+	private static Plugin plugin;
+	
+	public static Plugin getPlugin(){
+		return plugin;
+	}
+	
 	@Override
 	public void onEnable(){
+		plugin = this;
+		ConfigManager.createFiles();
 		Bukkit.getServer().getPluginManager().registerEvents(this, this);
 		Bukkit.getServer().getPluginManager().registerEvents(new ChatChannelGUI(), this);
 		for(Language l : Language.values())
