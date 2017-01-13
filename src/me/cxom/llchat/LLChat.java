@@ -1,11 +1,12 @@
 package me.cxom.llchat;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -25,14 +26,23 @@ public class LLChat extends JavaPlugin implements Listener{
 	private static Map<String, ChatChannel> channels = new LinkedHashMap<>();
 	
 	public static ChatChannel getChatChannel(String name){
-		return channels.get(name);
+		return channels.get(name.toUpperCase());
+	}
+	
+	public static List<ChatChannel> getChannels(){
+		return new ArrayList<>(channels.values());
+	}
+	
+	public static LLChatPlayer getPlayer(UUID uuid){
+		return players.get(uuid);
 	}
 	
 	@Override
 	public void onEnable(){
 		Bukkit.getServer().getPluginManager().registerEvents(this, this);
+		Bukkit.getServer().getPluginManager().registerEvents(new ChatChannelGUI(), this);
 		for(Language l : Language.values())
-			channels.put(l.name(), new ChatChannel(StringUtils.capitalize(l.name().toLowerCase()), l));
+			channels.put(l.name(), new ChatChannel(l.getName(), l));
 		for(Player p : Bukkit.getOnlinePlayers()){
 			UUID uuid = p.getUniqueId();
 			players.put(uuid, new LLChatPlayer(uuid));
@@ -54,7 +64,8 @@ public class LLChat extends JavaPlugin implements Listener{
 		LLChatPlayer llp = players.get(player.getUniqueId());
 		if (label.equalsIgnoreCase("channel") || label.equalsIgnoreCase("ch") || label.equalsIgnoreCase("chat")){
 			if (args.length < 1){
-				player.sendMessage(ChatColor.RED + "/channel <add|remove|main|list|status>");
+				//player.sendMessage(ChatColor.RED + "/channel <add|remove|main|list|status>");
+				ChatChannelGUI.open(llp);
 				return true;
 			}
 			
@@ -72,8 +83,8 @@ public class LLChat extends JavaPlugin implements Listener{
 				return true;
 			case "list":
 				player.sendMessage(ChatColor.GRAY + "-------All Chat Channels---------");
-				for (String s : channels.keySet())  
-					player.sendMessage("    " + ChatColor.YELLOW + s);
+				for (ChatChannel cc : channels.values())  
+					player.sendMessage("    " + ChatColor.YELLOW + cc.getName() + "  §8(" + cc.getLanguage().getISO() + "§8)");
 				player.sendMessage(ChatColor.GRAY + "-------------------------------");
 				return true;
 			case "status":
@@ -108,7 +119,6 @@ public class LLChat extends JavaPlugin implements Listener{
 					break;
 				}
 				llp.addChatChannel(cc);
-				player.sendMessage(ChatColor.GREEN + "You have joined the " + cc.getName() + " channel.");
 				break;
 			case "remove":
 			case "leave":
@@ -117,9 +127,8 @@ public class LLChat extends JavaPlugin implements Listener{
 					break;
 				}
 				llp.removeChatChannel(cc);
-				player.sendMessage(ChatColor.GREEN + "You have left the " + cc.getName() + " channel.");
 				if(llp.getMainChatChannel().equals(cc)){
-					player.sendMessage(ChatColor.RED + "Err, that was your active channel. Attempting to default to one of your other channels.");
+					player.sendMessage(ChatColor.RED + "Err, that was your speaking channel. Attempting to default to one of your other channels.");
 					if (llp.getChatChannels().isEmpty()){
 						player.sendMessage(ChatColor.RED + " . . . Seems you have no other active channels. Defaulting you to Global chat.");
 						Bukkit.dispatchCommand(player, "channel main global");
@@ -127,26 +136,20 @@ public class LLChat extends JavaPlugin implements Listener{
 					}
 					ChatChannel cc2 = llp.getChatChannels().get(0);
 					llp.setMainChatChannel(cc2);
-					player.sendMessage(ChatColor.GREEN + "The " + cc2.getName() + " channel has been set as your active channel.");
 				}
 				break;
 			case "main":
 			case "active":
 			case "set":
 				if(llp.getMainChatChannel().equals(cc)){
-					player.sendMessage(ChatColor.RED + "That is already your main channel!");
+					player.sendMessage(ChatColor.RED + "That is already your speaking channel!");
 					break;
 				}
-				if(!llp.isInChannel(cc)){
-					llp.addChatChannel(cc);
-					player.sendMessage(ChatColor.GREEN + "You have joined the " + cc.getName() + " channel.");
-				}
 				llp.setMainChatChannel(cc);
-				player.sendMessage(ChatColor.GREEN + "The " + cc.getName() + " channel has been set as your active channel.");
 				break;
 			default:
 				player.sendMessage(ChatColor.RED + "That subcommand was not recognized.");
-				player.sendMessage(ChatColor.RED + "/channel <add|remove|main|list>");
+				player.sendMessage(ChatColor.RED + "/channel <add|remove|main|list|status|help>");
 			}
 		}
 		
@@ -177,7 +180,7 @@ public class LLChat extends JavaPlugin implements Listener{
 	@EventHandler
 	public void onChat(AsyncPlayerChatEvent e){
 		LLChatPlayer llp = players.get(e.getPlayer().getUniqueId());
-		llp.getMainChatChannel().sendMessage(e.getMessage(), e.getPlayer().getName());
+		llp.getMainChatChannel().sendMessage(e.getMessage(), e.getPlayer().getDisplayName());
 		e.setCancelled(true);
 	}
 	

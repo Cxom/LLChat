@@ -6,6 +6,11 @@ import java.util.Set;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
+
 public class ChatChannel{
 	
 	public static final ChatChannel getGlobal(){
@@ -45,16 +50,22 @@ public class ChatChannel{
 	}
 	
 	public void sendMessage(String message, String sender){
+		System.out.println(ChatColor.stripColor("<" + lang.getISO() + ": " + sender + "> ") + message);
 		for(LLChatPlayer llp : subscribers){
 			Player player = llp.getPlayer();
 			String color = this.equals(llp.getMainChatChannel()) ? ChatColor.WHITE + "" : ChatColor.GRAY + "";
-			String msg = String.format("%s<%s%s: %s%s> %s", color, 
-					                                     llp.hasResourcePack() ? "§r" + lang.getFlag() : lang.getISO() + " ",
-					                                     color,
-													     sender,
-													     color,
-													     message);
-			player.sendMessage(msg);
+			TextComponent start = new TextComponent(TextComponent.fromLegacyText(color + "<"));
+			TextComponent channel = new TextComponent(TextComponent.fromLegacyText(llp.hasResourcePack() ? "§r" + lang.getFlag() : lang.getISO() + " "));
+			channel.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/channel main " + lang.getName()));
+			channel.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Join " + lang.getName() + "?").italic(true).create()));
+			String msg = String.format("%s: %s%s> %s", color,
+													   sender,
+													   color,
+													   message);
+			TextComponent rest = new TextComponent(TextComponent.fromLegacyText(msg));
+			start.addExtra(channel);
+			start.addExtra(rest);
+			player.spigot().sendMessage(start);
 		}
 	}
 	

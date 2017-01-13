@@ -40,6 +40,7 @@ public class LLChatPlayer {
 	public void addChatChannel(ChatChannel cc){
 		cc.addMember(this);
 		channels.add(cc);
+		getPlayer().sendMessage(ChatColor.GREEN + "You have joined the " + cc.getName() + " channel.");
 	}
 	
 	public boolean isInChannel(ChatChannel cc){
@@ -49,10 +50,15 @@ public class LLChatPlayer {
 	public void removeChatChannel(ChatChannel cc){
 		cc.removeMember(this);
 		channels.remove(cc);
+		getPlayer().sendMessage(ChatColor.GREEN + "You have left the " + cc.getName() + " channel.");
 	}
 	
 	public void setMainChatChannel(ChatChannel main){
+		if(!isInChannel(main)){
+			addChatChannel(main);
+		}
 		this.main = main;
+		getPlayer().sendMessage(ChatColor.GREEN + "The " + main.getName() + " channel has been set as your speaking channel.");
 	}
 	
 	public ChatChannel getMainChatChannel(){

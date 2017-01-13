@@ -1,28 +1,59 @@
 package me.cxom.llchat;
 
+import org.apache.commons.lang3.StringUtils;
 import org.bukkit.ChatColor;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 public enum Language {
 
-	GLOBAL(ChatColor.DARK_AQUA + "" + ChatColor.BOLD + "G" + ChatColor.RESET + "", '适'),
-	FRENCH("§1F§fR§4A", '退'),
-	SPANISH("§6S§4P§6A", '送'),
-	GERMAN("§8G§4E§6R", '逃'),
-	RUSSIAN("§fR§1U§4S", '逄'),
-	PORTUGUESE("§2P§aO§4R", '逅'),
-	JAPANESE("§fJ§cP§fN", '逆'),
-	ESPERANTO("§fE§3PO", '逇'),
-	SWEDISH("§1S§6W§1E", '逈'),
-	DANISH("§cD§fA§cN", '选'),
-	HEBREW("§1H§fE§1B", '逊'),
-	TURKISH("§4T§fU§4R", '逋');
+	//interrobang: http://textures.minecraft.net/texture/8f5b6f9db8b237b5ec67b58a1efbf8a1a5dcf813d3d869b232847f21c298948
+	
+	GLOBAL(ChatColor.DARK_AQUA + "" + ChatColor.BOLD + "G" + ChatColor.RESET + "", '适',
+			"http://textures.minecraft.net/texture/f4062b46745271abfee5ea0fb61588f1dfb14ee478332415db40e75fe3ee16"),
+			//"http://textures.minecraft.net/texture/28d62a7a6b1f221af05383c176782f9e33a1f5f92799018239b9dffd4eb4d"), Globe Version
+	FRENCH("§9F§fR§cA", '退', "http://textures.minecraft.net/texture/dbe7e5873220ca271a87ec2baf8abd77b485ed3118bb72f5b39f4a2bea8f4dbd"),
+			//http://textures.minecraft.net/texture/62551935bd26d96876bd6eb6cc2d9a92659aecda71bbbf1a6afc948c58eae5 - Globe
+	SPANISH("§6S§4P§6A", '送', "http://textures.minecraft.net/texture/ed66b2cbe36fb07512e4b6b9ce933bd5cacc04ba0cd43cae79965fce7b5"),
+			//http://textures.minecraft.net/texture/a48283801a12a14fc6e163e7ad52eb3ad385690bc86198ad894721af2dfa86f - Globe
+	GERMAN("§8G§4E§6R", '逃', "http://textures.minecraft.net/texture/2aeda329df95540458ad7f9f0f4d871e2957549d6a5bb94c6c68cce5c8995"),
+			//http://textures.minecraft.net/texture/afadf62a35bfb52be5513710588e497b1c5783d3c81f59dee1f84f113331757 - Globe
+	SLAVIC("§fS§1L§4A", '逄', "http://textures.minecraft.net/texture/d477b532bd23a673c3ce6ce566858d78685e4b9ce2466b642e79330bc9ac4c"),
+			//http://textures.minecraft.net/texture/af9b92849f3fb13eaaa2c89119d90847d3e1cf81c3f2c59c3f45171adf9456 - Globe
+	PORTUGUESE("§2P§eO§1R", '逅', "http://textures.minecraft.net/texture/b0ada8b1a53f934e32f345a117335ca323cff06ea73d62d8ebb364872a74198"),
+			//http://textures.minecraft.net/texture/2865ab5783357fdd5c7a77fbdb52317c7561511d4ba1e27c2c832567912a73f - Globe
+	JAPANESE("§fJ§cP§fN", '逆', "http://textures.minecraft.net/texture/361a1c542c453fff8f95f174d50b4674a34fc6249b1c7a02d15b6416e64c1ab"),
+			//http://textures.minecraft.net/texture/57334b55122788defc4bb21622810905debdbcf1d9fd19e479194c9f84d19fc - Globe
+	ESPERANTO("§fE§2PO", '逇', "http://textures.minecraft.net/texture/18c9f7e2fdd479d5d699f3ed11ae938bf2c58837b47fe36eb1957c791ecc740"),
+			//http://textures.minecraft.net/texture/3b50eb97e87626e8ae142b589fb9b235a95ba798d260b6f5c9b69f743045e44f - Globe
+	SCANDINAVIAN("§eS§4C§eA", 'c', "http://textures.minecraft.net/texture/af65317b9f2d56b0d4873fcc6ff29e4484b192fae9b8e57ab16c5430d957"),
+	//SWEDISH("§9S§eW§9E", '逈', "http://textures.minecraft.net/texture/5c973d5ace721a4d6ecc8c16c8952f78c5539fe1429c325501186aad9310"),
+			//http://textures.minecraft.net/texture/d5d2bf7ca5f885fa724d7a6fd20538c52dbe998ac76cb496c6b76ce473cdb9 - Globe
+	//DANISH("§4D§fA§4N", '选', "http://textures.minecraft.net/texture/8f5b6f9db8b237b5ec67b58a1efbf8a1a5dcf813d3d869b232847f21c298948"),
+	//HEBREW("§9H§fE§9B", '逊', "http://textures.minecraft.net/texture/8f5b6f9db8b237b5ec67b58a1efbf8a1a5dcf813d3d869b232847f21c298948"),
+	ITALIAN("§2I§fT§4A", 'c', "http://textures.minecraft.net/texture/25ec622dfe6276192c06bf57ed4ed499e7d9f4e487f14216cd7539b3825c90"),
+			//http://textures.minecraft.net/texture/c7fb18f68457a35e75c183cbad53fff2fd053a5b157380cc421e7e2d7bf1 - Globe
+	TURKISH("§4T§fU§4R", '逋', "http://textures.minecraft.net/texture/b6f34f4f94547712112839d1bbfb99e716a8af766027e5165746b5849d9ec6c");
+	//Hawaiian
+	//Bantu
+	//Icelandic
+	//Irish
+	//Finnish
+	//Mesoamerican
+	//Hungarian
 	
 	private final String iso;
 	private final char flag;
+	private final ItemStack skull;
 	
-	private Language(String iso, char flag){
+	private Language(String iso, char flag, String skullUrl){
 		this.iso = iso;
 		this.flag = flag;
+		ItemStack sk = Utils.getSkull(skullUrl);
+		ItemMeta im = sk.getItemMeta();
+		im.setDisplayName(getName());
+		sk.setItemMeta(im);
+		this.skull = sk;
 	}
 	
 	public String getISO(){
@@ -31,6 +62,14 @@ public enum Language {
 	
 	public char getFlag(){
 		return flag;
+	}
+	
+	public ItemStack getSkull(){
+		return skull;
+	}
+	
+	public String getName(){
+		return StringUtils.capitalize(name().toLowerCase());
 	}
 	
 }
