@@ -10,7 +10,7 @@ public enum Language {
 	//interrobang: http://textures.minecraft.net/texture/8f5b6f9db8b237b5ec67b58a1efbf8a1a5dcf813d3d869b232847f21c298948
 	
 	GLOBAL(ChatColor.DARK_AQUA + "" + ChatColor.BOLD + "G" + ChatColor.RESET + "", '适',
-			"http://textures.minecraft.net/texture/f4062b46745271abfee5ea0fb61588f1dfb14ee478332415db40e75fe3ee16"),
+			"http://textures.minecraft.net/texture/30c967926e7abef6ff6bcc41436e215733fd3f85881cf36ed87851711afbdfe"),
 			//"http://textures.minecraft.net/texture/28d62a7a6b1f221af05383c176782f9e33a1f5f92799018239b9dffd4eb4d"), Globe Version
 	FRENCH("§9F§fR§cA", '退', "http://textures.minecraft.net/texture/dbe7e5873220ca271a87ec2baf8abd77b485ed3118bb72f5b39f4a2bea8f4dbd"),
 			//http://textures.minecraft.net/texture/62551935bd26d96876bd6eb6cc2d9a92659aecda71bbbf1a6afc948c58eae5 - Globe
