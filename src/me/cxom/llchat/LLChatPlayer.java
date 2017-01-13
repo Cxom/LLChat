@@ -19,7 +19,6 @@ public class LLChatPlayer {
 	private boolean hasResourcePack = false;
 	
 	
-	
 	public LLChatPlayer(UUID uuid){
 		this.uuid = uuid;
 		setMainChatChannel(ChatChannel.getGlobal());
@@ -99,10 +98,13 @@ public class LLChatPlayer {
 	}
 	
 	public void remove(){
+		ChatChannel.getGlobal().removeMember(this);
+		channels.remove(ChatChannel.getGlobal());
 		savePlayer();
 		for(ChatChannel cc : channels){
 			cc.removeMember(this);
 		}
+		channels.clear();
 	}
 	
 	public void savePlayer(){
