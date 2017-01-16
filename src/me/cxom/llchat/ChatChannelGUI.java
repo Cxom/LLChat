@@ -1,11 +1,13 @@
 package me.cxom.llchat;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -20,12 +22,17 @@ public class ChatChannelGUI implements Listener{
 	public static Inventory channelGUI = Bukkit.createInventory(null, 54, "LLChat Channels");	
 	
 	private static final ItemStack main = Utils.getSkull("http://textures.minecraft.net/texture/ff373b5157eb24c6db4827b585b195e2513a7599784362c739c3e86fefbd18a");
-			//+ "http://textures.minecraft.net/texture/eeca87401a9bf37c8b55cac4a45c911b843dbd9c0c96cbe8291335c5069043"); - DarkPA
+			//"http://textures.minecraft.net/texture/eeca87401a9bf37c8b55cac4a45c911b843dbd9c0c96cbe8291335c5069043"); - DarkPA
 			//"http://textures.minecraft.net/texture/f21f41c54b9b681f2c3ea7d8c71d3cac8fb82f199905a6725d5701de9bdd98" Red
 			//"http://textures.minecraft.net/texture/5aa54d742492989f739deb7222a23bcfcf85e6c782fe2ce0cdeee0f3f2b0eb" Computer
 	private static final ItemStack active = new ItemStack(Material.GOLD_BLOCK);
 	private static final ItemStack joinAll = new ItemStack(Material.EMERALD_BLOCK);
 	private static final ItemStack exit = new ItemStack(Material.REDSTONE_BLOCK);
+	
+	private static final ItemStack help = Utils.getSkull("http://textures.minecraft.net/texture/5359d91277242fc01c309accb87b533f1929be176ecba2cde63bf635e05e699b"); //ICEQ PIXELFIX
+			//"http://textures.minecraft.net/texture/974679ac1c5dda815f717546a318fe1276882773b18ea485612c2d61ab85"); - Log
+			//"http://textures.minecraft.net/texture/65effb68b0e6d2fe2a5669a682927e318dac8332eff2a950f170fbe465f1f9" - Bigger Q Log
+			//"http://textures.minecraft.net/texture/5163dafac1d91a8c91db576caac784336791a6e18d8f7f62778fc47bf146b6" - Regular Log
 	
 	static{
 		ItemMeta mm = main.getItemMeta();
@@ -41,6 +48,12 @@ public class ChatChannelGUI implements Listener{
 		ItemMeta im = exit.getItemMeta();
 		im.setDisplayName(ChatColor.RED + "Exit");
 		exit.setItemMeta(im);
+		
+		ItemMeta hm = help.getItemMeta();
+		hm.setDisplayName(ChatColor.LIGHT_PURPLE + "Need help?");
+		hm.setLore(Arrays.asList("Click here!",
+								 "§o§8(displayed in chat)"));
+		help.setItemMeta(hm);
 	}
 	
 	
@@ -90,6 +103,7 @@ public class ChatChannelGUI implements Listener{
 			inv.setItem(50, next);
 		}
 		
+		inv.setItem(46, help);
 		inv.setItem(53, joinAll);
 		
 		inv.setItem(49, exit);
@@ -122,7 +136,8 @@ public class ChatChannelGUI implements Listener{
 				}
 				break;
 			case SKULL_ITEM:
-				if(ChatColor.stripColor(is.getItemMeta().getDisplayName()).equals("Speak here?")){
+				String name = ChatColor.stripColor(is.getItemMeta().getDisplayName()); 
+				if(name.equals("Speak here?")){
 					
 					ChatChannel old = llp.getMainChatChannel();
 					int i = old.getLanguage().ordinal();
@@ -140,6 +155,21 @@ public class ChatChannelGUI implements Listener{
 					e.getInventory().setItem(e.getSlot() - 9, active);
 					
 					llp.setMainChatChannel(LLChat.getChatChannel(channel));
+				}else if (name.equals("Need help?")){
+					Player player = (Player) e.getWhoClicked();
+					player.sendMessage(ChatColor.DARK_GRAY + "---------LLChat Guide---------");
+					player.sendMessage(ChatColor.YELLOW + "Congrats, you've figured out /ch! Here's a proper guide to getting started:");
+					player.sendMessage(ChatColor.GRAY + "-" + ChatColor.AQUA + "When you open the menu, click on a §4red clay block§b to §4join§b a channel or a §2green clay block§b to §2leave§b one! "
+													  	 					 + "You can also click the §aemerald§b block to §ajoin all§b the channels.");
+					player.sendMessage(ChatColor.GRAY + "-" + ChatColor.AQUA + "The §egold blocks§b show you what channel you're §espeaking in§b. Click on a purple §d\"SPEAK\"§b head to §dchange§b that!");
+					player.sendMessage(ChatColor.GRAY + "-" + ChatColor.AQUA + "Chat from the channel you're §fspeaking in§b will show up in §fwhite§b. All §7other channels§b will show up in §7gray§b.");
+					player.sendMessage(ChatColor.BLUE + " You can also switch speaking channels by clicking on the channel prefixes in chat. Try it!");
+					 
+					player.sendMessage(ChatColor.GRAY + "-" + ChatColor.AQUA + "Whatever you choose, your preferences are saved when you log out "
+																			 + "(you'll be put in §3Global§b when you log in no matter what though!)");
+				    player.sendMessage(ChatColor.GRAY + "-" + ChatColor.AQUA + "Want to manage your channels through commands?. Run \"/ch help\" for a guide.");
+				    player.sendMessage(ChatColor.DARK_GRAY + "------------------------------");
+				    player.closeInventory();
 				}
 				break;
 			case STAINED_GLASS_PANE:
