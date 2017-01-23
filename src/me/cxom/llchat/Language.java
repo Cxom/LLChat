@@ -42,11 +42,13 @@ public enum Language {
 	//Mesoamerican
 	//Hungarian
 	
+	private final String rawIso;
 	private final String iso;
 	private final char flag;
 	private final ItemStack skull;
 	
 	private Language(String iso, char flag, String skullUrl){
+		this.rawIso = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('§', iso)).toLowerCase();
 		this.iso = iso;
 		this.flag = flag;
 		ItemStack sk = Utils.getSkull(skullUrl);
@@ -54,6 +56,10 @@ public enum Language {
 		im.setDisplayName(getName());
 		sk.setItemMeta(im);
 		this.skull = sk;
+	}
+	
+	public String getRawISO(){
+		return rawIso;
 	}
 	
 	public String getISO(){
