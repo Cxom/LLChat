@@ -13,6 +13,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -54,6 +55,7 @@ public class LLChat extends JavaPlugin implements Listener{
 		Bukkit.getServer().getPluginManager().registerEvents(new ChatChannelGUI(), this);
 		for(Language l : Language.values())
 			channels.put(l.name(), new ChatChannel(l.getName(), l));
+		ChatChannelMessageCommand.registerChannelMessageCommands();
 		for(Player p : Bukkit.getOnlinePlayers()){
 			UUID uuid = p.getUniqueId();
 			players.put(uuid, new LLChatPlayer(uuid));
@@ -196,7 +198,7 @@ public class LLChat extends JavaPlugin implements Listener{
 		players.remove(e.getPlayer().getUniqueId());
 	}
 	
-	@EventHandler
+	@EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
 	public void onChat(AsyncPlayerChatEvent e){
 		LLChatPlayer llp = players.get(e.getPlayer().getUniqueId());
 		llp.getMainChatChannel().sendMessage(e.getMessage(), e.getPlayer().getDisplayName());
