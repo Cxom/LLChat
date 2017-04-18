@@ -13,34 +13,37 @@ import com.mojang.authlib.properties.Property;
 
 public class Utils {
 
-	public static ItemStack getSkull(String url) {
-		ItemStack head = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
+    public static ItemStack getSkull(String url) {
+        ItemStack head = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
 
-		if (url == null || url.isEmpty())
-			return head;
+        if (url == null || url.isEmpty())
+            return head;
 
-		ItemMeta headMeta = head.getItemMeta();
-		GameProfile profile = new GameProfile(UUID.randomUUID(), null);
-		byte[] encodedData = Base64.getEncoder().encode(String.format("{textures:{SKIN:{url:\"%s\"}}}", url).getBytes());
-		profile.getProperties().put("textures", new Property("textures", new String(encodedData)));
-		Field profileField = null;
+        ItemMeta headMeta = head.getItemMeta();
+        GameProfile profile = new GameProfile(UUID.randomUUID(), null);
+        byte[] encodedData = Base64.getEncoder().encode(
+                String.format("{textures:{SKIN:{url:\"%s\"}}}", url)
+                        .getBytes());
+        profile.getProperties().put("textures",
+                new Property("textures", new String(encodedData)));
+        Field profileField = null;
 
-		try {
-			profileField = headMeta.getClass().getDeclaredField("profile");
-		} catch (NoSuchFieldException | SecurityException e) {
-			e.printStackTrace();
-		}
+        try {
+            profileField = headMeta.getClass().getDeclaredField("profile");
+        } catch (NoSuchFieldException | SecurityException e) {
+            e.printStackTrace();
+        }
 
-		profileField.setAccessible(true);
+        profileField.setAccessible(true);
 
-		try {
-			profileField.set(headMeta, profile);
-		} catch (IllegalArgumentException | IllegalAccessException e) {
-			e.printStackTrace();
-		}
+        try {
+            profileField.set(headMeta, profile);
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
 
-		head.setItemMeta(headMeta);
-		return head;
-	}
-	
+        head.setItemMeta(headMeta);
+        return head;
+    }
+
 }
