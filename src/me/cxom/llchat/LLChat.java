@@ -14,6 +14,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -29,6 +30,7 @@ import me.cxom.llchat.configuration.ConfigManager;
 
 public class LLChat extends JavaPlugin implements Listener {
 
+    private static Connection conn;
     private static Map<UUID, LLChatPlayer> players = new HashMap<>();
     private static Map<String, ChatChannel> channels = new LinkedHashMap<>();
 
@@ -42,6 +44,11 @@ public class LLChat extends JavaPlugin implements Listener {
 
     public static LLChatPlayer getPlayer(UUID uuid) {
         return players.get(uuid);
+    }
+
+    // More static methods, not super good
+    public static Connection getConn() {
+        return conn;
     }
 
     private static Plugin plugin;
@@ -66,9 +73,18 @@ public class LLChat extends JavaPlugin implements Listener {
             players.put(uuid, new LLChatPlayer(uuid));
         }
 
+        ConfigurationSection config = this.getConfig();
+        getCommand("lang").setExecutor(new LangExecutor(config));
+
         try {
-            Connection conn = DriverManager.getConnection(
+            conn = DriverManager.getConnection(
                     "jdbc:sqlite:plugins/LLChat/llchat.db");
+            conn.createStatement().executeUpdate(
+                    "CREATE TABLE IF NOT EXISTS mastery (" +
+                            "uuid VARCHAR(36)," +
+                            "language VARCHAR(255)," +
+                            "mlevel VARCHAR(255)," +
+                            "PRIMARY KEY (uuid, language));");
         } catch (SQLException e) {
             System.out.println("Could not connect to database!");
         }
@@ -256,7 +272,7 @@ public class LLChat extends JavaPlugin implements Listener {
     public void onChat(AsyncPlayerChatEvent e) {
         LLChatPlayer llp = players.get(e.getPlayer().getUniqueId());
         llp.getMainChatChannel().sendMessage(e.getMessage(),
-                e.getPlayer().getDisplayName());
+                e.getPlayer().getDisplayName(), llp);
         e.setCancelled(true);
     }
 

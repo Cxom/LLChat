@@ -1,15 +1,12 @@
 package me.cxom.llchat;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
+import net.md_5.bungee.api.chat.*;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
 
 public class ChatChannel {
 
@@ -49,7 +46,8 @@ public class ChatChannel {
         subscribers.remove(llp);
     }
 
-    public void sendMessage(String message, String sender) {
+    public void sendMessage(String message, String sender, LLChatPlayer sllp) {
+
         System.out.println(ChatColor.stripColor(
                 "<" + lang.getISO() + ": " + sender + "> ") + message);
 
@@ -78,14 +76,12 @@ public class ChatChannel {
 
             TextComponent sendc = new TextComponent(
                     TextComponent.fromLegacyText(sender));
-            sendc.setHoverEvent(new HoverEvent(
-                    HoverEvent.Action.SHOW_TEXT,
-                    new ComponentBuilder("Have you heard the tragedy of " +
-                            "Darth Plagueis the wise?")
-                            .append("\nI thought not. It's not a story " +
-                                    "the Jedi would tell you.")
-                            .italic(true).create()
-            ));
+            if (sllp != null) {
+                sendc.setHoverEvent(new HoverEvent(
+                        HoverEvent.Action.SHOW_TEXT,
+                        langsToComp(sllp.getLanguages())
+                ));
+            }
 
             String finalmsg = String.format("%s> %s", color,
                     message);
@@ -97,6 +93,25 @@ public class ChatChannel {
             start.addExtra(rest);
             player.spigot().sendMessage(start);
         }
+    }
+
+    public void sendMessage(String message, String sender) {
+        sendMessage(message, sender, null);
+    }
+
+    private BaseComponent[] langsToComp(Map<String, String> langs) {
+        ComponentBuilder b = new ComponentBuilder("Languages:" +
+                "       ").bold(true);
+        if (langs.isEmpty()) {
+            b.append("\n");
+            b.append("None").italic(true);
+        } else {
+            for (String k : langs.keySet()) {
+                b.append("\n" + k + " - " + ChatColor.RED + langs.get(k))
+                    .bold(false);
+            }
+        }
+        return b.create();
     }
 
 }

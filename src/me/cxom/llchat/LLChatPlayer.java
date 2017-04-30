@@ -1,8 +1,9 @@
 package me.cxom.llchat;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -118,5 +119,32 @@ public class LLChatPlayer {
         }
         players.set(uuid.toString(), langs.trim());
         ConfigManager.savePlayersConfig();
+    }
+
+    public Map<String, String> getLanguages() {
+        Map<String, String> langscontainer = new HashMap<>();
+        Map<String, String> langs = new TreeMap<>((o1, o2) -> {
+            int diff = -langscontainer.get(o1)
+                    .compareTo(langscontainer.get(o2));
+            return diff == 0 ? o1.compareTo(o2) : diff;
+        });
+
+        try {
+            PreparedStatement stmt = LLChat.getConn().prepareStatement(
+                    "SELECT language, mlevel FROM mastery WHERE uuid LIKE ?");
+            stmt.setString(1, uuid.toString());
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                langscontainer.put(rs.getString(1), rs.getString(2));
+                langs.put(rs.getString(1), rs.getString(2));
+            }
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println("Could not get language mastery data from DB");
+            e.printStackTrace();
+        }
+
+        return langs;
     }
 }
