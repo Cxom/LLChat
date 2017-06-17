@@ -1,6 +1,6 @@
 package me.cxom.llchat;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -30,8 +30,7 @@ public enum Language {
     private final ItemStack skull;
 
     private Language(String iso, char flag, String skullUrl) {
-        this.rawIso = ChatColor.stripColor(
-                ChatColor.translateAlternateColorCodes('§', iso)).toLowerCase();
+        this.rawIso = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('§', iso)).toLowerCase();
         this.iso = iso;
         this.flag = flag;
         ItemStack sk = Utils.getSkull(skullUrl);
@@ -57,9 +56,8 @@ public enum Language {
         return skull;
     }
 
-    public String getName() {
-        return StringUtils.capitalize(
-                name().toLowerCase().replaceAll("_", " "));
-    }
+    public String getName(){
+		return WordUtils.capitalize(name().toLowerCase().replaceAll("_", " "));
+	}
 
 }
