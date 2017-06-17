@@ -25,19 +25,23 @@ public class LLChatPlayer {
         loadPlayer();
     }
 
-    public void loadPlayer() {
-        String langs = ConfigManager.getPlayersConfig()
-                .getString(uuid.toString());
-
-        if (langs != null) {
-            for (String channel : langs.split(" ")) {
-                ChatChannel cc = LLChat.getChatChannel(channel);
-                if (cc != null) {
-                    addChatChannel(cc);
-                }
-            }
-        }
-    }
+    public void loadPlayer(){
+		String langs = ConfigManager.getPlayersConfig().getString(uuid.toString());
+		Player player = getPlayer();
+		String joined = ChatColor.DARK_GRAY + ">";
+		if (langs != null){
+			for (String channel : langs.split(" ")){
+				ChatChannel cc = LLChat.getChatChannel(channel);
+				if (cc != null){
+					cc.addMember(this);
+					channels.add(cc);
+					joined += " " + cc.getLanguage().getISO();
+				}
+			}
+			player.sendMessage(ChatColor.DARK_GRAY + "You've been re-added to the following channels: ");
+			player.sendMessage(joined);
+		}
+	}
 
     public UUID getUniqueId() {
         return uuid;
