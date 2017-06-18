@@ -1,5 +1,6 @@
 package me.cxom.llchat;
 
+import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.*;
 import org.bukkit.configuration.ConfigurationSection;
@@ -119,8 +120,8 @@ public class LangExecutor implements CommandExecutor, TabCompleter {
             langb.append(" ");
             langb.append(args[args.length-2]);
         }
-        String lang = langb.toString();
-        String level = args[args.length-1];
+        String lang = WordUtils.capitalize(langb.toString().toLowerCase());
+        String level = WordUtils.capitalize(args[args.length-1].toLowerCase());
 
         if (!config.getStringList("levels").contains(level)) {
             p.sendMessage(ChatColor.RED +
@@ -161,7 +162,7 @@ public class LangExecutor implements CommandExecutor, TabCompleter {
             langb.append(" ");
         }
         langb.append(args[args.length - 1]);
-        String lang = langb.toString();
+        String lang = WordUtils.capitalize(langb.toString().toLowerCase());
 
         try {
             Connection c = LLChat.getConn();
