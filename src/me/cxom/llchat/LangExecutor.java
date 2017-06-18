@@ -43,7 +43,7 @@ public class LangExecutor implements CommandExecutor, TabCompleter {
 
         if (args.length == 0 || args[0].equalsIgnoreCase("help")) {
             sender.sendMessage(ChatColor.RED +
-                    "Usage: /lang <add|remove|list|levels>");
+                    "Usage: /lang <add|remove|change|list|levels>");
             return true;
         }
 
@@ -83,10 +83,10 @@ public class LangExecutor implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        if (args[0].equalsIgnoreCase("add")) {
+        if (args[0].equalsIgnoreCase("add") || args[0].equalsIgnoreCase("change")) {
             if (args.length < 3) {
                 sender.sendMessage(ChatColor.RED +
-                        "Usage: /lang add <language> <level>");
+                        "Usage: /lang " + args[0].toLowerCase() + " <language> <level>");
                 return true;
             }
 
@@ -138,7 +138,7 @@ public class LangExecutor implements CommandExecutor, TabCompleter {
         try {
             Connection c = LLChat.getConn();
             PreparedStatement stmt = c.prepareStatement(
-                    "INSERT INTO mastery (uuid, language, mlevel) " +
+                    "REPLACE INTO mastery (uuid, language, mlevel) " +
                             "VALUES (?, ?, ?);");
             stmt.setString(1, p.getUniqueId().toString());
             stmt.setString(2, lang);
