@@ -1,18 +1,26 @@
 package me.cxom.llchat;
 
-import org.apache.commons.lang.WordUtils;
-import org.bukkit.ChatColor;
-import org.bukkit.command.*;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.entity.Player;
-import org.bukkit.util.StringUtil;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import org.apache.commons.lang.WordUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.command.TabCompleter;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
+import org.bukkit.util.StringUtil;
 
 public class LangExecutor implements CommandExecutor, TabCompleter {
     private final ConfigurationSection config;
@@ -43,7 +51,7 @@ public class LangExecutor implements CommandExecutor, TabCompleter {
 
         if (args.length == 0 || args[0].equalsIgnoreCase("help")) {
             sender.sendMessage(ChatColor.RED +
-                    "Usage: /lang <add|remove|change|list|levels>");
+                    "Usage: /lang <add|remove|change|see|list|levels>");
             return true;
         }
 
@@ -95,6 +103,44 @@ public class LangExecutor implements CommandExecutor, TabCompleter {
                             1, args.length));
         }
 
+        if (args[0].equalsIgnoreCase("see") || args[0].equalsIgnoreCase("get")){
+        	if (args.length < 2) {
+        		sender.sendMessage(ChatColor.RED +
+        				"Usage: /lang " + args[0].toLowerCase() + " <player>");
+        		return true;
+        	}
+        	
+        	UUID uuid;
+        	String name;
+        	Player player = Bukkit.getPlayer(args[1]);
+        	if (player != null) {
+        		uuid = player.getUniqueId();
+        		name = player.getName();
+        	} else {
+        		@SuppressWarnings("deprecation")
+				OfflinePlayer op = Bukkit.getOfflinePlayer(args[1]);
+        		if (op.hasPlayedBefore()) {
+        			uuid = op.getUniqueId();
+        			name = op.getName();
+        		} else {
+        			sender.sendMessage(ChatColor.RED + 
+        					"No player with that username found");
+        			return true;
+        		}
+        	}
+            
+            Map<String, String> langs = LLChatPlayer.getLanguages(uuid);
+            sender.sendMessage(ChatColor.BOLD + "Languages: " + ChatColor.RESET + "" + ChatColor.RED + "" + ChatColor.ITALIC + name);
+            if (langs.isEmpty()){
+            	sender.sendMessage(ChatColor.ITALIC + "" + ChatColor.BOLD + "None");
+            } else {
+            	for (Map.Entry<String, String> e : langs.entrySet()){
+            		sender.sendMessage(e.getKey() + " - " + ChatColor.RED + e.getValue());
+            	}
+            }
+            return true;
+        }
+        
         if (args[0].equalsIgnoreCase("remove")) {
             if (args.length < 2) {
                 sender.sendMessage(ChatColor.RED +

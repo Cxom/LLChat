@@ -125,7 +125,11 @@ public class LLChatPlayer {
         ConfigManager.savePlayersConfig();
     }
 
-    public Map<String, String> getLanguages() {
+    public Map<String, String> getLanguages(){
+    	return getLanguages(uuid);
+    }
+    
+    public static Map<String, String> getLanguages(UUID uuid) {
         Map<String, String> langscontainer = new HashMap<>();
         Map<String, String> langs = new TreeMap<>((o1, o2) -> {
             int diff = -langscontainer.get(o1)

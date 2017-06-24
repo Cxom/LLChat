@@ -10,4 +10,4 @@ commands:
     aliases: [ch, chat]
   lang:
     description: Configure your own language levels and inspect those of other players
-    usage: /lang <levels|list|add|remove|change|help>
+    usage: /lang <levels|list|add|remove|change|see|help>
