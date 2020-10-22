@@ -1,0 +1,1 @@
+LLChat is a custom language learning focused chat plugin for the server AroundTheWorldMC
