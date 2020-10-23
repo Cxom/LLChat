@@ -2,12 +2,15 @@ package me.cxom.llchat;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.HashMap;
+import java.util.TreeMap;
 
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.Bukkit;
@@ -38,53 +41,6 @@ public class LangExecutor implements CommandExecutor, TabCompleter {
         }
     }
 
-    public boolean cmdSee(CommandSender sender, String[] args) {
-        if (args.length < 2) {
-            sender.sendMessage(ChatColor.RED +
-                    "Usage: /lang " + args[0].toLowerCase() + " <player>");
-            return true;
-        }
-        
-        UUID uuid;
-        String name;
-        Player player = Bukkit.getPlayer(args[1]);
-        if (player != null) {
-            uuid = player.getUniqueId();
-            name = player.getName();
-        } else {
-            @SuppressWarnings("deprecation")
-            OfflinePlayer op = Bukkit.getOfflinePlayer(args[1]);
-            if (op.hasPlayedBefore()) {
-                uuid = op.getUniqueId();
-                name = op.getName();
-            } else {
-                sender.sendMessage(ChatColor.RED + 
-                        "No player with that username found");
-                return true;
-            }
-        }
-        
-        Map<String, String> langs = LLChatPlayer.getLanguages(uuid);
-        sender.sendMessage(ChatColor.BOLD + "Languages: " + ChatColor.RESET + "" + ChatColor.RED + "" + ChatColor.ITALIC + name);
-        if (langs.isEmpty()){
-            sender.sendMessage(ChatColor.ITALIC + "" + ChatColor.BOLD + "None");
-        } else {
-            for (Map.Entry<String, String> e : langs.entrySet()){
-                sender.sendMessage(e.getKey() + " - " + ChatColor.RED + e.getValue());
-            }
-        }
-        return true;
-    }
-    public boolean cmdLevels(CommandSender sender, String[] args) {
-        List<String> levels = config.getStringList("levels");
-        String levelHelp = config.getString("levels-help");
-        sender.sendMessage(ChatColor.AQUA + levelHelp);
-        sender.sendMessage(ChatColor.YELLOW + "Available levels:");
-        sender.sendMessage(levels.stream().map(l -> "- " + l)
-                .toArray(String[]::new));
-        return true;
-    }
-
     public boolean onCommand(CommandSender sender, Command cmd, String label,
                              String[] args) {
 
@@ -104,7 +60,8 @@ public class LangExecutor implements CommandExecutor, TabCompleter {
         }
 
         if (args[0].equalsIgnoreCase("levels")) {
-            return cmdLevels(sender, args);
+            return !(sender instanceof Player) ||
+                    onLevelCommand(sender, args);
         }
 
         if (args[0].equalsIgnoreCase("list")) {
@@ -148,7 +105,18 @@ public class LangExecutor implements CommandExecutor, TabCompleter {
         }
 
         if (args[0].equalsIgnoreCase("see") || args[0].equalsIgnoreCase("get")){
-        	return cmdSee(sender, args);
+            return !(sender instanceof Player) ||
+                    onSeeCommand(sender, args);
+        }
+
+        if (args[0].equalsIgnoreCase("has") || args[0].equalsIgnoreCase("knows")){
+            if (args.length < 3) {
+                sender.sendMessage(ChatColor.RED +
+                        "Usage: /lang " + args[0].toLowerCase() + " <language> <level>");
+                return true;
+            }
+            return !(sender instanceof Player) ||
+                    onSeeCommand(sender, args);
         }
         
         if (args[0].equalsIgnoreCase("remove")) {
@@ -164,6 +132,95 @@ public class LangExecutor implements CommandExecutor, TabCompleter {
         }
 
         return false;
+    }
+
+    public boolean onSeeCommand(CommandSender sender, String[] args) {
+        if (args.length < 2) {
+            sender.sendMessage(ChatColor.RED +
+                    "Usage: /lang " + args[0].toLowerCase() + " <player>");
+            return true;
+        }
+        
+        UUID uuid;
+        String name;
+        Player player = Bukkit.getPlayer(args[1]);
+        if (player != null) {
+            uuid = player.getUniqueId();
+            name = player.getName();
+        } else {
+            @SuppressWarnings("deprecation")
+            OfflinePlayer op = Bukkit.getOfflinePlayer(args[1]);
+            if (op.hasPlayedBefore()) {
+                uuid = op.getUniqueId();
+                name = op.getName();
+            } else {
+                sender.sendMessage(ChatColor.RED + 
+                        "No player with that username found");
+                return true;
+            }
+        }
+        
+        Map<String, String> langs = LLChatPlayer.getLanguages(uuid);
+        sender.sendMessage(ChatColor.BOLD + "Languages: " + ChatColor.RESET + "" + ChatColor.RED + "" + ChatColor.ITALIC + name);
+        if (langs.isEmpty()){
+            sender.sendMessage(ChatColor.ITALIC + "" + ChatColor.BOLD + "None");
+        } else {
+            for (Map.Entry<String, String> e : langs.entrySet()){
+                sender.sendMessage(e.getKey() + " - " + ChatColor.RED + e.getValue());
+            }
+        }
+        return true;
+    }
+    public boolean onHasCommand(CommandSender sender, String[] args) {
+        if (args.length < 2) {
+            sender.sendMessage(ChatColor.RED +
+                    "Usage: /lang " + args[0].toLowerCase() + " <language>");
+            return true;
+        }
+
+        Map<String, String> spkrcontainer = new HashMap<>();
+        Map<String, String> speakers = new TreeMap<>((o1, o2) -> {
+            int diff = -spkrcontainer.get(o1)
+                    .compareTo(spkrcontainer.get(o2));
+            return diff == 0 ? o1.compareTo(o2) : diff;
+        });
+
+        try {
+            // NOTE: I don't do much sql so this might be a bit wonky but it should work
+            PreparedStatement stmt = LLChat.getConn().prepareStatement(
+                    "SELECT uuid,language, mlevel FROM mastery WHERE language LIKE ?");
+            stmt.setString(1,args[2]);
+            ResultSet rs = stmt.executeQuery();
+            sender.sendMessage(ChatColor.BOLD + "Players who speak " + ChatColor.RESET + "" + ChatColor.GREEN + "" + ChatColor.ITALIC + args[2] + ":");
+            while (rs.next()) {
+                UUID uuid = UUID.fromString(rs.getString(1));
+                String speaker = Bukkit.getPlayer(uuid).getName();
+                spkrcontainer.put(speaker, rs.getString(3));
+                speakers.put(speaker, rs.getString(3));
+            }
+            if (speakers.isEmpty()){
+                sender.sendMessage(ChatColor.ITALIC + "" + ChatColor.BOLD + "None");
+            } else {
+                for (Map.Entry<String, String> e : speakers.entrySet()){
+                    sender.sendMessage(e.getKey() + " - " + ChatColor.RED + e.getValue());
+                }
+            }
+        } catch(SQLException e) {
+            sender.sendMessage(ChatColor.RED +
+                    "An internal error has occurred; " +
+                    "could not get speakers of this language");
+            e.printStackTrace();
+        }
+        return true;
+    }
+    public boolean onLevelCommand(CommandSender sender, String[] args) {
+        List<String> levels = config.getStringList("levels");
+        String levelHelp = config.getString("levels-help");
+        sender.sendMessage(ChatColor.AQUA + levelHelp);
+        sender.sendMessage(ChatColor.YELLOW + "Available levels:");
+        sender.sendMessage(levels.stream().map(l -> "- " + l)
+                .toArray(String[]::new));
+        return true;
     }
 
     private boolean onAddCommand(Player p, String[] args) {
@@ -250,7 +307,7 @@ public class LangExecutor implements CommandExecutor, TabCompleter {
             if (args.length == 0 || args[0].equalsIgnoreCase("")
                     || args.length == 1) {
                 return StringUtil.copyPartialMatches(args[0],
-                        Arrays.asList("add", "remove", "list", "levels"),
+                        Arrays.asList("add", "see", "has", "remove", "list", "levels"),
                         new ArrayList<>());
             }
             if (args[0].equalsIgnoreCase("add")) {
