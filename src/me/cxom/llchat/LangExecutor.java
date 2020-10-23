@@ -38,9 +38,57 @@ public class LangExecutor implements CommandExecutor, TabCompleter {
         }
     }
 
+    public boolean cmdSee(CommandSender sender, String[] args) {
+        if (args.length < 2) {
+            sender.sendMessage(ChatColor.RED +
+                    "Usage: /lang " + args[0].toLowerCase() + " <player>");
+            return true;
+        }
+        
+        UUID uuid;
+        String name;
+        Player player = Bukkit.getPlayer(args[1]);
+        if (player != null) {
+            uuid = player.getUniqueId();
+            name = player.getName();
+        } else {
+            @SuppressWarnings("deprecation")
+            OfflinePlayer op = Bukkit.getOfflinePlayer(args[1]);
+            if (op.hasPlayedBefore()) {
+                uuid = op.getUniqueId();
+                name = op.getName();
+            } else {
+                sender.sendMessage(ChatColor.RED + 
+                        "No player with that username found");
+                return true;
+            }
+        }
+        
+        Map<String, String> langs = LLChatPlayer.getLanguages(uuid);
+        sender.sendMessage(ChatColor.BOLD + "Languages: " + ChatColor.RESET + "" + ChatColor.RED + "" + ChatColor.ITALIC + name);
+        if (langs.isEmpty()){
+            sender.sendMessage(ChatColor.ITALIC + "" + ChatColor.BOLD + "None");
+        } else {
+            for (Map.Entry<String, String> e : langs.entrySet()){
+                sender.sendMessage(e.getKey() + " - " + ChatColor.RED + e.getValue());
+            }
+        }
+        return true;
+    }
+    public boolean cmdLevels(CommandSender sender, String[] args) {
+        List<String> levels = config.getStringList("levels");
+        String levelHelp = config.getString("levels-help");
+        sender.sendMessage(ChatColor.AQUA + levelHelp);
+        sender.sendMessage(ChatColor.YELLOW + "Available levels:");
+        sender.sendMessage(levels.stream().map(l -> "- " + l)
+                .toArray(String[]::new));
+        return true;
+    }
+
     public boolean onCommand(CommandSender sender, Command cmd, String label,
                              String[] args) {
 
+        // Player check
         if (!(sender instanceof Player) &&
                 !(sender instanceof ConsoleCommandSender)) {
             sender.sendMessage(ChatColor.RED +
@@ -56,11 +104,7 @@ public class LangExecutor implements CommandExecutor, TabCompleter {
         }
 
         if (args[0].equalsIgnoreCase("levels")) {
-            List<String> levels = config.getStringList("levels");
-            sender.sendMessage(ChatColor.YELLOW + "Available levels:");
-            sender.sendMessage(levels.stream().map(l -> "- " + l)
-                    .toArray(String[]::new));
-            return true;
+            return cmdLevels(sender, args);
         }
 
         if (args[0].equalsIgnoreCase("list")) {
@@ -104,41 +148,7 @@ public class LangExecutor implements CommandExecutor, TabCompleter {
         }
 
         if (args[0].equalsIgnoreCase("see") || args[0].equalsIgnoreCase("get")){
-        	if (args.length < 2) {
-        		sender.sendMessage(ChatColor.RED +
-        				"Usage: /lang " + args[0].toLowerCase() + " <player>");
-        		return true;
-        	}
-        	
-        	UUID uuid;
-        	String name;
-        	Player player = Bukkit.getPlayer(args[1]);
-        	if (player != null) {
-        		uuid = player.getUniqueId();
-        		name = player.getName();
-        	} else {
-        		@SuppressWarnings("deprecation")
-				OfflinePlayer op = Bukkit.getOfflinePlayer(args[1]);
-        		if (op.hasPlayedBefore()) {
-        			uuid = op.getUniqueId();
-        			name = op.getName();
-        		} else {
-        			sender.sendMessage(ChatColor.RED + 
-        					"No player with that username found");
-        			return true;
-        		}
-        	}
-            
-            Map<String, String> langs = LLChatPlayer.getLanguages(uuid);
-            sender.sendMessage(ChatColor.BOLD + "Languages: " + ChatColor.RESET + "" + ChatColor.RED + "" + ChatColor.ITALIC + name);
-            if (langs.isEmpty()){
-            	sender.sendMessage(ChatColor.ITALIC + "" + ChatColor.BOLD + "None");
-            } else {
-            	for (Map.Entry<String, String> e : langs.entrySet()){
-            		sender.sendMessage(e.getKey() + " - " + ChatColor.RED + e.getValue());
-            	}
-            }
-            return true;
+        	return cmdSee(sender, args);
         }
         
         if (args[0].equalsIgnoreCase("remove")) {
