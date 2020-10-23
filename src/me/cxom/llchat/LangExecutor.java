@@ -110,13 +110,8 @@ public class LangExecutor implements CommandExecutor, TabCompleter {
         }
 
         if (args[0].equalsIgnoreCase("has") || args[0].equalsIgnoreCase("knows")){
-            if (args.length < 3) {
-                sender.sendMessage(ChatColor.RED +
-                        "Usage: /lang " + args[0].toLowerCase() + " <language> <level>");
-                return true;
-            }
             return !(sender instanceof Player) ||
-                    onSeeCommand(sender, args);
+                    onHasCommand(sender, args);
         }
         
         if (args[0].equalsIgnoreCase("remove")) {
@@ -172,7 +167,7 @@ public class LangExecutor implements CommandExecutor, TabCompleter {
         return true;
     }
     public boolean onHasCommand(CommandSender sender, String[] args) {
-        if (args.length < 2) {
+        if (args.length < 1) {
             sender.sendMessage(ChatColor.RED +
                     "Usage: /lang " + args[0].toLowerCase() + " <language>");
             return true;
@@ -189,7 +184,8 @@ public class LangExecutor implements CommandExecutor, TabCompleter {
             // NOTE: I don't do much sql so this might be a bit wonky but it should work
             PreparedStatement stmt = LLChat.getConn().prepareStatement(
                     "SELECT uuid,language, mlevel FROM mastery WHERE language LIKE ?");
-            stmt.setString(1,args[2]);
+                    // TODO: add level filtering support
+            stmt.setString(1,args[1]);
             ResultSet rs = stmt.executeQuery();
             sender.sendMessage(ChatColor.BOLD + "Players who speak " + ChatColor.RESET + "" + ChatColor.GREEN + "" + ChatColor.ITALIC + args[2] + ":");
             while (rs.next()) {
