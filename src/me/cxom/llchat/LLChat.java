@@ -62,8 +62,8 @@ public class LLChat extends JavaPlugin implements Listener {
         plugin = this;
         ConfigManager.createFiles();
         Bukkit.getServer().getPluginManager().registerEvents(this, this);
-        Bukkit.getServer().getPluginManager().registerEvents(
-                new ChatChannelGUI(), this);
+        //xxBukkit.getServer().getPluginManager().registerEvents(
+        //        new ChatChannelGUI(), this);
 
         for (Language l : Language.values())
             channels.put(l.name(), new ChatChannel(l.getName(), l));
@@ -116,7 +116,31 @@ public class LLChat extends JavaPlugin implements Listener {
                 || label.equalsIgnoreCase("chat")) {
 
             if (args.length < 1) {
-                ChatChannelGUI.open(llp);
+                player.sendMessage(ChatColor.GRAY
+                        + "---------LLChat Help---------");
+                player.sendMessage(" " + ChatColor.GREEN
+                        + "/channel help" + ChatColor.GRAY
+                        + " for a list of commands and what they do.");
+                player.sendMessage(" " + ChatColor.GREEN
+                        + "/channel list" + ChatColor.GRAY
+                        + " for a list ofr available channels.");
+                player.sendMessage(" " + ChatColor.GREEN
+                        + "/channel status" + ChatColor.GRAY
+                        + " for a list of channels your subscribed to.");
+                player.sendMessage(" " + ChatColor.GREEN
+                        + "/channel add <channel>" + ChatColor.GRAY
+                        + " to subscribe to a new channel.");
+                player.sendMessage(" " + ChatColor.GREEN
+                        + "/channel remove <channel>" + ChatColor.GRAY
+                        + " to unsubscribe from a channel.");
+                player.sendMessage(" " + ChatColor.GREEN
+                        + "/channel main <channel>" + ChatColor.GRAY
+                        + " to set which channel you're");
+                player.sendMessage("    "
+                        + ChatColor.GRAY + "speaking in.");
+                player.sendMessage(ChatColor.GRAY
+                        + "-----------------------------");
+                //ChatChannelGUI.open(llp);
                 return true;
             }
 
@@ -152,8 +176,8 @@ public class LLChat extends JavaPlugin implements Listener {
                             + "-------All Chat Channels---------");
                     for (ChatChannel cc : channels.values())
                         player.sendMessage("    " + ChatColor.YELLOW
-                                + cc.getName() + "  §8("
-                                + cc.getLanguage().getISO() + "§8)");
+                                + cc.getName() + "  ï¿½8("
+                                + cc.getLanguage().getISO() + "ï¿½8)");
                     player.sendMessage(ChatColor.GRAY
                             + "-------------------------------");
                     return true;
@@ -178,9 +202,10 @@ public class LLChat extends JavaPlugin implements Listener {
 
             if (args.length < 2) {
                 player.sendMessage(ChatColor.RED
-                        + "/channel <add|remove|main> <channel>");
+                        + "Usage: /" + label + " <add|remove|main> <channel>");
                 return true;
             }
+
             ChatChannel cc = channels.get(args[1].toUpperCase());
             if (cc == null) {
                 player.sendMessage(ChatColor.RED

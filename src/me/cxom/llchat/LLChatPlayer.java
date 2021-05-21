@@ -155,4 +155,31 @@ public class LLChatPlayer {
 
         return langs;
     }
+
+    public static Map<String, String> getSpeakers(String lang) {
+        Map<String, String> speakerscontainer = new HashMap<>();
+        Map<String, String> speakers = new TreeMap<>((o1, o2) -> {
+            int diff = -speakerscontainer.get(o1)
+                    .compareTo(speakerscontainer.get(o2));
+            return diff == 0 ? o1.compareTo(o2) : diff;
+        });
+
+        try {
+            PreparedStatement stmt = LLChat.getConn().prepareStatement(
+                    "SELECT uuid, mlevel FROM mastery WHERE language LIKE ?");
+            stmt.setString(1, lang.toString());
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                speakerscontainer.put(rs.getString(1), rs.getString(2));
+                speakers.put(rs.getString(1), rs.getString(2));
+            }
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println("Could not get speakers from DB");
+            e.printStackTrace();
+        }
+
+        return speakers;
+    }
 }

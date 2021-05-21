@@ -2,15 +2,12 @@ package me.cxom.llchat;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.HashMap;
-import java.util.TreeMap;
 
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.Bukkit;
@@ -172,47 +169,35 @@ public class LangExecutor implements CommandExecutor, TabCompleter {
                     "Usage: /lang " + args[0].toLowerCase() + " <language>");
             return true;
         }
-
-        Map<String, String> spkrcontainer = new HashMap<>();
-        Map<String, String> speakers = new TreeMap<>((o1, o2) -> {
-            int diff = -spkrcontainer.get(o1)
-                    .compareTo(spkrcontainer.get(o2));
-            return diff == 0 ? o1.compareTo(o2) : diff;
-        });
-
-        try {
-            // NOTE: I don't do much sql so this might be a bit wonky but it should work
-            PreparedStatement stmt = LLChat.getConn().prepareStatement(
-                    "SELECT uuid,language, mlevel FROM mastery WHERE language LIKE ?");
-                    // TODO: add level filtering support
-            stmt.setString(1,args[1]);
-            ResultSet rs = stmt.executeQuery();
-            sender.sendMessage(ChatColor.BOLD + "Players who speak " + ChatColor.RESET + "" + ChatColor.GREEN + "" + ChatColor.ITALIC + args[2] + ":");
-            while (rs.next()) {
-                UUID uuid = UUID.fromString(rs.getString(1));
-                String speaker = Bukkit.getPlayer(uuid).getName();
-                spkrcontainer.put(speaker, rs.getString(3));
-                speakers.put(speaker, rs.getString(3));
-            }
-            if (speakers.isEmpty()){
-                sender.sendMessage(ChatColor.ITALIC + "" + ChatColor.BOLD + "None");
-            } else {
-                for (Map.Entry<String, String> e : speakers.entrySet()){
-                    sender.sendMessage(e.getKey() + " - " + ChatColor.RED + e.getValue());
+        String lang = args[1];
+        
+        Map<String, String> speakers = LLChatPlayer.getSpeakers(lang);
+        sender.sendMessage(ChatColor.BOLD + "Speakers of " + ChatColor.RESET + "" + ChatColor.GREEN + "" + ChatColor.ITALIC + lang);
+        if (speakers.isEmpty()){
+            sender.sendMessage(ChatColor.ITALIC + "" + ChatColor.BOLD + "None");
+        } else {
+            for (Map.Entry<String, String> e : speakers.entrySet()){
+                UUID uuid = null;
+                try {
+                    uuid = UUID.fromString(e.getKey());
+                } catch (Exception err) {
+                    // ? WTF?
+                }
+                if (uuid != null) {
+                    String speaker = Bukkit.getOfflinePlayer(uuid).getName();
+                    if (speaker == null) {
+                        speaker = Bukkit.getOfflinePlayer(uuid).getName();
+                    } // I hate this.
+                    if (speaker != null) {
+                        sender.sendMessage(speaker + " - " + ChatColor.GREEN + e.getValue());
+                    }
                 }
             }
-        } catch(SQLException e) {
-            sender.sendMessage(ChatColor.RED +
-                    "An internal error has occurred; " +
-                    "could not get speakers of this language");
-            e.printStackTrace();
         }
         return true;
     }
     public boolean onLevelCommand(CommandSender sender, String[] args) {
         List<String> levels = config.getStringList("levels");
-        String levelHelp = config.getString("levels-help");
-        sender.sendMessage(ChatColor.AQUA + levelHelp);
         sender.sendMessage(ChatColor.YELLOW + "Available levels:");
         sender.sendMessage(levels.stream().map(l -> "- " + l)
                 .toArray(String[]::new));

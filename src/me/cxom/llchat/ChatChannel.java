@@ -107,7 +107,7 @@ public class ChatChannel {
             b.append("None").italic(true);
         } else {
             for (String k : langs.keySet()) {
-                b.append("\n" + k + " - " + ChatColor.RED + langs.get(k))
+                b.append("\n" + k + " - " + ChatColor.GREEN + langs.get(k))
                     .bold(false);
             }
         }
