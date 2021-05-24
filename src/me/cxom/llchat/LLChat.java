@@ -32,7 +32,7 @@ public class LLChat extends JavaPlugin implements Listener {
 
     private static Connection conn;
     private static Map<UUID, LLChatPlayer> players = new HashMap<>();
-    private static Map<String, ChatChannel> channels = new LinkedHashMap<>();
+    private static Map<String, ChatChannel> channels = new  LinkedHashMap<>();
 
     public static ChatChannel getChatChannel(String name) {
         return channels.get(name.toUpperCase());

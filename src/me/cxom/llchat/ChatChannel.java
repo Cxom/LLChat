@@ -53,26 +53,25 @@ public class ChatChannel {
 
         for (LLChatPlayer llp : subscribers) {
             Player player = llp.getPlayer();
+            boolean currentChan = llp.getMainChatChannel().getName() == lang.getName();
             String color = this.equals(llp.getMainChatChannel()) ?
                     ChatColor.WHITE + "" : ChatColor.GRAY + "";
 
             TextComponent start = new TextComponent(
                     TextComponent.fromLegacyText(color + "<"));
             TextComponent channel = new TextComponent(
-                    TextComponent.fromLegacyText(
-                            llp.hasResourcePack() ? "�r" + lang.getFlag()
-                                    : lang.getISO() + " "));
-
-            channel.setClickEvent(new ClickEvent(
-                    ClickEvent.Action.RUN_COMMAND,
-                    "/channel main " + lang.getName()));
-            channel.setHoverEvent(new HoverEvent(
-                    HoverEvent.Action.SHOW_TEXT,
-                    new ComponentBuilder("Join " + lang.getName() + "?")
-                            .italic(true).create()));
-
+                    TextComponent.fromLegacyText(currentChan ? "" : lang.getISO() + " "));
+            if (currentChan) {
+                channel.setClickEvent(new ClickEvent(
+                        ClickEvent.Action.RUN_COMMAND,
+                        "/channel main " + lang.getName()));
+                channel.setHoverEvent(new HoverEvent(
+                        HoverEvent.Action.SHOW_TEXT,
+                        new ComponentBuilder("Join " + lang.getName() + "?")
+                                    .italic(true).create()));
+            }
             TextComponent seprt = new TextComponent(
-                    TextComponent.fromLegacyText(String.format("%s: ", color)));
+                    TextComponent.fromLegacyText(currentChan ? "" : String.format("%s: ", color)));
 
             TextComponent sendc = new TextComponent(
                     TextComponent.fromLegacyText(sender));
@@ -87,8 +86,10 @@ public class ChatChannel {
                     message);
             TextComponent rest = new TextComponent(
                     TextComponent.fromLegacyText(finalmsg));
-            start.addExtra(channel);
-            start.addExtra(seprt);
+            if (currentChan) {
+                start.addExtra(channel);
+                start.addExtra(seprt);
+            }
             start.addExtra(sendc);
             start.addExtra(rest);
             player.spigot().sendMessage(start);

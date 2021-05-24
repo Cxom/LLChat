@@ -52,7 +52,7 @@ public class LangExecutor implements CommandExecutor, TabCompleter {
 
         if (args.length == 0 || args[0].equalsIgnoreCase("help")) {
             sender.sendMessage(ChatColor.RED +
-                    "Usage: /lang <add|remove|change|see|list|levels>");
+                    "Usage: /lang <add|remove|change|see|has|list|levels>");
             return true;
         }
 
