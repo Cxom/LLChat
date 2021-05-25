@@ -1,15 +1,20 @@
 package me.cxom.llchat;
 
+//import java.util.Iterator;
+//import java.util.ArrayList;
+import java.util.List;
+
+//import me.cxom.llchat.Channel;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+//import org.bukkit.inventory.ItemStack;
+//import org.bukkit.inventory.meta.ItemMeta;
 
-public enum Language {
+public class Language {
 
     // What is this for?
-    GLOBAL(ChatColor.DARK_AQUA + "" + ChatColor.BOLD + "G" + ChatColor.RESET + "", '适',
-            "http://textures.minecraft.net/texture/30c967926e7abef6ff6bcc41436e215733fd3f85881cf36ed87851711afbdfe");
+    //GLOBAL(ChatColor.DARK_AQUA + "" + ChatColor.BOLD + "G" + ChatColor.RESET + "", '适',
+            //"http://textures.minecraft.net/texture/30c967926e7abef6ff6bcc41436e215733fd3f85881cf36ed87851711afbdfe");
     //FRENCH("§9F§fR§cA", '退', "http://textures.minecraft.net/texture/dbe7e5873220ca271a87ec2baf8abd77b485ed3118bb72f5b39f4a2bea8f4dbd"),
 
     //SPANISH("§6S§4P§6A", '送', "http://textures.minecraft.net/texture/ed66b2cbe36fb07512e4b6b9ce933bd5cacc04ba0cd43cae79965fce7b5"),
@@ -25,20 +30,36 @@ public enum Language {
     //ITALIAN("§2I§fT§4A", 'c', "http://textures.minecraft.net/texture/25ec622dfe6276192c06bf57ed4ed499e7d9f4e487f14216cd7539b3825c90"),
     //TURKISH("§4T§fU§4R", '逋', "http://textures.minecraft.net/texture/b6f34f4f94547712112839d1bbfb99e716a8af766027e5165746b5849d9ec6c");
 
-    private final String rawIso;
-    private final String iso;
-    private final char flag;
-    private final ItemStack skull;
+    private static List<Language> langChannels;
+    private final String name;
+    private final String rawIso;// No color channel tag (eg. UKR)
+    private final String iso;   // Colored channel tag. (eg. §eU§9K§eR)
+    
+    //private final char flag;
+    //private final ItemStack skull;
 
-    private Language(String iso, char flag, String skullUrl) {
+    // Removed char flag and String skullurl
+    private Language(String name, String iso) {
+        this.name = WordUtils.capitalize(name.toLowerCase());
         this.rawIso = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('§', iso)).toLowerCase();
         this.iso = iso;
-        this.flag = flag;
-        ItemStack sk = Utils.getSkull(skullUrl);
-        ItemMeta im = sk.getItemMeta();
-        im.setDisplayName(getName());
-        sk.setItemMeta(im);
-        this.skull = sk;
+        //this.flag = flag;
+        //ItemStack sk = Utils.getSkull(skullUrl);
+        //ItemMeta im = sk.getItemMeta();
+        //im.setDisplayName(getName());
+        //sk.setItemMeta(im);
+        //this.skull = sk;
+    }
+
+    public static List<Language> makeChannels() {
+        List<Channel> ch = Channel.getChannels();
+        for (Channel chan : ch) {
+            langChannels.add(new Language(chan.getName(), chan.getPrefix()));
+        }
+        return langChannels;
+    }
+    public static List<Language> values() {
+        return langChannels; // Backwards compatability hack
     }
 
     public String getRawISO() {
@@ -49,16 +70,21 @@ public enum Language {
         return iso;
     }
 
-    public char getFlag() {
+    /*public char getFlag() {
         return flag;
     }
 
     public ItemStack getSkull() {
         return skull;
-    }
+    }*/
 
     public String getName(){
-		return WordUtils.capitalize(name().toLowerCase().replaceAll("_", " "));
+		return name.replaceAll("_", " ");
+        //name().toLowerCase().replaceAll("_", " "));
 	}
+
+    public String getChannelName() {
+        return name;
+    }
 
 }

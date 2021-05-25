@@ -66,7 +66,7 @@ public class LLChat extends JavaPlugin implements Listener {
         //        new ChatChannelGUI(), this);
 
         for (Language l : Language.values())
-            channels.put(l.name(), new ChatChannel(l.getName(), l));
+            channels.put(l.getChannelName(), new ChatChannel(l.getName(), l));
         ChatChannelMessageCommand.registerChannelMessageCommands();
         for (Player p : Bukkit.getOnlinePlayers()) {
             UUID uuid = p.getUniqueId();

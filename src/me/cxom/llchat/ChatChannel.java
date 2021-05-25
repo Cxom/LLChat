@@ -10,24 +10,26 @@ import org.bukkit.entity.Player;
 
 public class ChatChannel {
 
-    public static final ChatChannel getGlobal() {
+    public static ChatChannel getGlobal() {
         return LLChat.getChatChannel("GLOBAL");
     }
 
     private final String name;
-    private final Language lang;
+    private final Language language;
     private final Set<LLChatPlayer> subscribers = new HashSet<>();
 
-    public ChatChannel(String name, Language lang) {
+    public ChatChannel(String name, Language language) {
         this.name = name;
-        this.lang = lang;
+        this.language = language;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof ChatChannel)) return false;
-        ChatChannel cc = (ChatChannel) o;
-        return name.equals(cc.getName()) && lang == cc.getLanguage();
+        if (!(o instanceof ChatChannel)) {
+            return false;
+        }
+        ChatChannel channel = (ChatChannel) o;
+        return name.equals(channel.getName()) && language == channel.getLanguage();
     }
 
     public String getName() {
@@ -35,58 +37,47 @@ public class ChatChannel {
     }
 
     public Language getLanguage() {
-        return lang;
+        return language;
     }
 
-    public void addMember(LLChatPlayer llp) {
-        subscribers.add(llp);
+    public void addMember(LLChatPlayer player) {
+        subscribers.add(player);
     }
 
-    public void removeMember(LLChatPlayer llp) {
-        subscribers.remove(llp);
+    public void removeMember(LLChatPlayer player) {
+        subscribers.remove(player);
     }
 
-    public void sendMessage(String message, String sender, LLChatPlayer sllp) {
+    public void sendMessage(String message, String sender, LLChatPlayer llChatPlayer) {
 
-        System.out.println(ChatColor.stripColor(
-                "<" + lang.getISO() + ": " + sender + "> ") + message);
+        System.out.println(ChatColor.stripColor("<" + language.getISO() + ": " + sender + "> ") + message);
 
-        for (LLChatPlayer llp : subscribers) {
-            Player player = llp.getPlayer();
-            boolean currentChan = llp.getMainChatChannel().getName() == lang.getName();
-            String color = this.equals(llp.getMainChatChannel()) ?
-                    ChatColor.WHITE + "" : ChatColor.GRAY + "";
+        for (LLChatPlayer subscriber : subscribers) {
+            Player player = subscriber.getPlayer();
+            boolean isInChannel = subscriber.getMainChatChannel().getName().equals(language.getName());
 
-            TextComponent start = new TextComponent(
-                    TextComponent.fromLegacyText(color + "<"));
-            TextComponent channel = new TextComponent(
-                    TextComponent.fromLegacyText(currentChan ? "" : lang.getISO() + " "));
-            if (currentChan) {
-                channel.setClickEvent(new ClickEvent(
-                        ClickEvent.Action.RUN_COMMAND,
-                        "/channel main " + lang.getName()));
-                channel.setHoverEvent(new HoverEvent(
-                        HoverEvent.Action.SHOW_TEXT,
-                        new ComponentBuilder("Join " + lang.getName() + "?")
-                                    .italic(true).create()));
+            String color = this.equals(subscriber.getMainChatChannel())
+                    ? ChatColor.WHITE.toString()
+                    : ChatColor.GRAY.toString();
+
+            TextComponent start = new TextComponent(TextComponent.fromLegacyText(color + "<"));
+            TextComponent channel = new TextComponent(TextComponent.fromLegacyText(isInChannel ? "" : language.getISO() + " "));
+            if (isInChannel) {
+                channel.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/channel main " + language.getName()));
+                channel.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Join " + language
+                        .getName() + "?").italic(true).create()));
             }
-            TextComponent seprt = new TextComponent(
-                    TextComponent.fromLegacyText(currentChan ? "" : String.format("%s: ", color)));
+            TextComponent seprt = new TextComponent(TextComponent.fromLegacyText(isInChannel ? "" : String.format("%s: ", color)));
 
-            TextComponent sendc = new TextComponent(
-                    TextComponent.fromLegacyText(sender));
-            if (sllp != null) {
-                sendc.setHoverEvent(new HoverEvent(
-                        HoverEvent.Action.SHOW_TEXT,
-                        langsToComp(sllp.getLanguages())
+            TextComponent sendc = new TextComponent(TextComponent.fromLegacyText(sender));
+            if (llChatPlayer != null) {
+                sendc.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, langsToComp(llChatPlayer.getLanguages())
                 ));
             }
 
-            String finalmsg = String.format("%s> %s", color,
-                    message);
-            TextComponent rest = new TextComponent(
-                    TextComponent.fromLegacyText(finalmsg));
-            if (currentChan) {
+            String finalmsg = String.format("%s> %s", color, message);
+            TextComponent rest = new TextComponent(TextComponent.fromLegacyText(finalmsg));
+            if (isInChannel) {
                 start.addExtra(channel);
                 start.addExtra(seprt);
             }
@@ -101,15 +92,13 @@ public class ChatChannel {
     }
 
     private BaseComponent[] langsToComp(Map<String, String> langs) {
-        ComponentBuilder b = new ComponentBuilder("Languages:" +
-                "       ").bold(true);
+        ComponentBuilder b = new ComponentBuilder("Languages:" + "       ").bold(true);
         if (langs.isEmpty()) {
             b.append("\n");
             b.append("None").italic(true);
         } else {
             for (String k : langs.keySet()) {
-                b.append("\n" + k + " - " + ChatColor.GREEN + langs.get(k))
-                    .bold(false);
+                b.append("\n" + k + " - " + ChatColor.GREEN + langs.get(k)).bold(false);
             }
         }
         return b.create();

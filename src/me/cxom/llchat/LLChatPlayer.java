@@ -99,8 +99,9 @@ public class LLChatPlayer {
         String color = main.equals(channel) ?
                 ChatColor.WHITE + "" : ChatColor.GRAY + "";
         message = String.format("%s<%s%s: %s%s> %s", color,
-                hasResourcePack ? "&r" + channel.getLanguage().getFlag()
-                        : channel.getLanguage().getISO() + " ",
+                "&r" + channel.getLanguage().getISO() + " ",
+                //hasResourcePack ? "&r" + channel.getLanguage().getFlag()
+                        //: channel.getLanguage().getISO() + " ",
                 color, player.getName(), color, message);
         player.sendMessage(message);
     }
