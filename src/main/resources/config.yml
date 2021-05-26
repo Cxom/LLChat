@@ -1,0 +1,295 @@
+# Prefixes can take color codes in the form of &<char>
+# Where char is of the following:
+# Formatting:
+#  Bold: l
+#  Italic: o
+#  Underline n
+#  Reset: r
+# Color:
+#  Just do /kit color ingame...
+#
+# Always put formatting chars after colors if using both
+
+levels:
+  - Pre-a1
+  - A1
+  - A1+
+  - A2
+  - A2+
+  - B1
+  - B1+
+  - B2
+  - B2+
+  - C1
+  - C1+
+  - C2
+  - Native
+
+channels:
+  Global:
+    prefix: '&3&lG'
+    language: English
+
+  Alternate:
+    prefix: '&3ALT'
+    language: English
+
+  Spanish:
+    prefix: '&6S&4P&6A'
+    language: Spanish
+
+  French:
+    prefix: '&9F&fR&cA'
+    language: French
+
+  Slavic:
+    prefix: '&fS&1L&4A'
+    languages:
+      - Russian
+      - Ukranian
+      - Belarussian
+
+  Scandinavian:
+    prefix: '&eS&4C&eA'
+    languages:
+      - Norwegian
+      - Swedish
+      - Danish
+
+  Romanian:
+    prefix: '&1R&6O&4M'
+    language: Romanian
+
+  German:
+    prefix: '&8G&4E&6R'
+    language: German
+
+  Ukrainian:
+    prefix: '&eU&eK&9R'
+    language: Ukrainian
+
+  Koreanic:
+    prefix: '&9K&cO&eR'
+    language: Koreanic
+
+# Pre-defined 100 most commonly spoken languages in the world + a couple others
+languages:
+  - Adyghe
+  - Afrikaans
+  - Ainu
+  - Akan
+  - Albanian
+  - Allemannic German
+  - American Sign Language
+  - Amharic
+  - Ancient Greek
+  - Arabic
+  - Armenian
+  - Assamese
+  - Atlantean
+  - Austro Bavarian
+  - Awadhi
+  - Azerbaijani
+  - Balochi
+  - Belarusian
+  - Basque
+  - Bengali
+  - Berber
+  - Bhojpuri
+  - Bosnian
+  - Breton
+  - Bribri
+  - British Sign Language
+  - Bulgarian
+  - Burmese
+  - Cantonese
+  - Catalan
+  - Cebuano
+  - Cherokee
+  - Chechen
+  - Chewa
+  - Chhattisgarhi
+  - Chittagonian
+  - Corsican
+  - Croatian
+  - Czech
+  - Dakota
+  - Danish
+  - Danish Sign Language
+  - Deccan
+  - Dhundhari
+  - Dutch
+  - Dutch Sign Language
+  - Eastern Min
+  - Egyptian
+  - Emend
+  - English
+  - Enping
+  - Esperanto
+  - Estonian
+  - Ewe
+  - Faroese
+  - French
+  - Finnish
+  - Frisian
+  - Fula
+  - Fuzhounese
+  - Galician
+  - Gan
+  - German
+  - Georgian
+  - Gilbertese
+  - Gothic
+  - Greek
+  - Greenlandic
+  - Guarani
+  - Gujarati
+  - Gullah
+  - Haitian Creole
+  - Hakka
+  - Haryanvi
+  - Hausa
+  - Hawaiian
+  - Hebrew
+  - Hiligaynon
+  - Hindi
+  - Hmong
+  - Hokkien
+  - Hungarian
+  - Hunnanese
+  - Icelandic
+  - Ido
+  - Igbo
+  - Ilocano
+  - Ilonggo
+  - Indonesian
+  - Interlingua
+  - Inuktitut
+  - Irish
+  - Italian
+  - Japanese
+  - Javanese
+  - Jin
+  - Kannada
+  - Kazakh
+  - Khmer
+  - Kinyarwanda
+  - Kirundi
+  - Klingon
+  - Konkani
+  - Korean
+  - Kumeyaay
+  - Kurdish
+  - Kyrgyz
+  - Lakota
+  - Lao
+  - Latin
+  - Latvian
+  - Ligurian
+  - Limburgish
+  - Lithuanian
+  - Livonia
+  - Lojban
+  - Lolcatz
+  - Luxembourgish
+  - Macedonian
+  - Madurese
+  - Magahi
+  - Maithili
+  - Malagasy
+  - Malay
+  - Malayalam
+  - Malaysian
+  - Maltese
+  - Manchu
+  - Mandarin
+  - Manx
+  - Maori
+  - Marathi
+  - Marwari
+  - Mi'kmaq
+  - Mohawk
+  - Mongolian
+  - Mossi
+  - Nahuatl
+  - Navajo
+  - Neapolitan
+  - Nepali
+  - Norn
+  - Northern Min
+  - Northern Sami
+  - Norwegian
+  - Odia
+  - Ojibwe
+  - Old Church Slavonic
+  - Old English
+  - Oriya
+  - Oromo
+  - Pashto
+  - Papiamento
+  - Persian
+  - Pirate
+  - Polish
+  - Portuguese
+  - Punjabi
+  - Quechua
+  - Quenya
+  - Rapa Nui
+  - Romani
+  - Romanian
+  - Russian
+  - Rusyn
+  - Samoan
+  - Sanskrit
+  - Sandscript
+  - Saraiki
+  - Scots
+  - Scottish Gaelic
+  - Serbian
+  - Shanghainese
+  - Shona
+  - Sicilian
+  - Sindarin
+  - Sindhi
+  - Singlish
+  - Sinhalese
+  - Slovenian
+  - Slovak
+  - Somali
+  - Southern Min
+  - Spanish
+  - Sranan Tongo
+  - Sumerian
+  - Sundanese
+  - Swahili
+  - Swedish
+  - Sylheti
+  - Tagalog
+  - Tamil
+  - Telugu
+  - Teochew
+  - Thai
+  - Tibetan
+  - Toki Pona
+  - Turkish
+  - Turkmen
+  - Ukrainian
+  - Urdu
+  - Uyghur
+  - Uzbek
+  - Venetian
+  - Vietnamese
+  - Vulcan
+  - Walloon
+  - Welsh
+  - Wolof
+  - Wu
+  - Xincan
+  - Xhosa
+  - Xiang
+  - Yiddish
+  - Yoruba
+  - Yucatec Mayan
+  - Yue
+  - Zhuang
+  - Zulu

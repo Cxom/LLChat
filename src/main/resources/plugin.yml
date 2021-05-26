@@ -1,0 +1,12 @@
+name: LLChat
+main: com.reddit.aroundtheworldmc.LLChat
+version: 3.0
+description: A chat plugin to facilitate language learning on AroundTheWorldMC
+author: Cxom, Puzzlecube, Martionex
+
+commands:
+  channel:
+    aliases: [ch, chat]
+  lang:
+    description: Configure your own language levels and inspect those of other players
+    usage: /lang <levels|list|add|remove|change|see|help>
