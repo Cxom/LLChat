@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.reddit.aroundtheworldmc"
-version = "3.0"
+version = "3.0.1"
 
 repositories {
     mavenCentral()
@@ -27,11 +27,22 @@ tasks.withType<Jar> {
     from({
         configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) }
     })
-}
 
-tasks.jar {
-    copy {
-        from("build/libs/LLChat-3.0.jar")
-        into("papermc/plugins")
-    }
+    project.gradle.addBuildListener(object : BuildListener {
+        override fun buildStarted(gradle: Gradle) {}
+
+        override fun settingsEvaluated(settings: Settings) {}
+
+        override fun projectsLoaded(gradle: Gradle) {}
+
+        override fun projectsEvaluated(gradle: Gradle) {}
+
+        override fun buildFinished(result: BuildResult) {
+            copy {
+                from("build/libs/LLChat-3.0.1.jar")
+                into("papermc/plugins")
+            }
+        }
+
+    })
 }

@@ -6,24 +6,25 @@
 #  Underline n
 #  Reset: r
 # Color:
-#  Just do /kit color ingame...
+#  Just do /kit color in-game...
 #
 # Always put formatting chars after colors if using both
 
+# Order the levels from high to low fluency
 levels:
-  - Pre-a1
-  - A1
-  - A1+
-  - A2
-  - A2+
-  - B1
-  - B1+
-  - B2
-  - B2+
-  - C1
-  - C1+
-  - C2
   - Native
+  - C2
+  - C1+
+  - C1
+  - B2+
+  - B2
+  - B1+
+  - B1
+  - A2+
+  - A2
+  - A1+
+  - A1
+  - Pre-A1
 
 channels:
   Global:

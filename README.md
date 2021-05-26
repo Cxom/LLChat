@@ -1,5 +1,6 @@
 # LLChat
-A chat plugin to facilitate language learning on AroundTheWorldMC
+
+A chat plugin to facilitate language learning on AroundTheWorldMC.
 
 ## Features
 
@@ -11,8 +12,8 @@ A chat plugin to facilitate language learning on AroundTheWorldMC
 
 1. Open this as a Gradle project in your IDE.
 
-2. Run the Gradle "jar" command, e.g. using `./gradlew jar`.
-   This will build the plugin and place the resulting plugin file in `papermc/plugins/`.
+2. Run the Gradle "jar" command, e.g. using `./gradlew jar`. This will build the plugin and place the resulting plugin
+   file in `papermc/plugins/`.
 
 3. Run `start.sh` to set up and start a Papermc Minecraft server.
 
@@ -20,3 +21,7 @@ To update the server after changing code simply rerun the jar command and type `
 No need to restart the server every time.
 
 Check `start.sh` to change Minecraft versions, Papermc builds, etc.
+
+## Plugin development
+
+Visit https://www.spigotmc.org/wiki/spigot-plugin-development/
